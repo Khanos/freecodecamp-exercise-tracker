@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require('express')
 const app = express()
 const bodyParser = require('body-parser')
@@ -5,7 +6,24 @@ const bodyParser = require('body-parser')
 const cors = require('cors')
 
 const mongoose = require('mongoose')
-mongoose.connect(process.env.MLAB_URI || 'mongodb://localhost/exercise-track' )
+mongoose.connect(process.env.CONNECTION_URL, {
+  dbName: 'trackers',
+  useNewUrlParser: true,
+  useUnifiedTopology: true
+});
+let userSchema = new mongoose.Schema(
+  {
+    username: String
+  }
+);
+let userModel = mongoose.model('userModel', userSchema );
+let exerciseSchema = new mongoose.Schema(
+  {
+    original_url: String,
+    short_url: Number
+  }
+);
+let exerciseModel = mongoose.model('exerciseModel', exerciseSchema );
 
 app.use(cors())
 
@@ -17,6 +35,10 @@ app.use(express.static('public'))
 app.get('/', (req, res) => {
   res.sendFile(__dirname + '/views/index.html')
 });
+
+app.post('/api/exercise/new-user', (req, res) => {
+  
+})
 
 
 // Not found middleware
